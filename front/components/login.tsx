@@ -45,34 +45,38 @@ export default function Login() {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center mx-auto">
-      <Card className="min-w-[400px]">
-        <CardHeader>
-          <CardTitle>Connexion</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input type="email" name="email" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input type="password" name="password" />
-            </div>
-            <Button type="submit" className="w-full">
-              Se connecter
-            </Button>
-          </form>
-        </CardContent>
-        <CardFooter>
-          <span>Pas encore de compte? </span>
-          &nbsp;
-          <Link href="/register" className="text-blue-500 font-bold">
-            Inscrivez vous
-          </Link>
-        </CardFooter>
-      </Card>
-    </div>
+      <div className="flex h-screen items-center justify-center mx-auto">
+          <Card className="min-w-[400px]">
+              <CardHeader>
+                  <CardTitle>Connexion</CardTitle>
+              </CardHeader>
+              <CardContent>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                      <div className="space-y-2">
+                          <Label htmlFor="email">Email</Label>
+                          <Input type="email" name="email" />
+                      </div>
+                      <div className="space-y-2">
+                          <Label htmlFor="password">Password</Label>
+                          <Input type="password" name="password" />
+                      </div>
+                      <Button type="submit" className="w-full">
+                          Se connecter
+                      </Button>
+                  </form>
+              </CardContent>
+              <CardFooter>
+                  <small>
+                      Pas encore de compte?&nbsp;
+                      <Link
+                          href="/register"
+                          className="text-blue-500 font-bold"
+                      >
+                          Inscrivez vous
+                      </Link>
+                  </small>
+              </CardFooter>
+          </Card>
+      </div>
   );
 }

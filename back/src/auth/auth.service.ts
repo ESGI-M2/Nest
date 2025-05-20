@@ -3,13 +3,9 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'src/prisma.service';
 import { UsersService } from 'src/users/users.service';
-
-interface registerData {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-}
+import { RegisterDto } from './dto/registerDto';
+import EmailAlreadyExistsError from './exceptions/email-already-exists-error.exception.ts';
+import { FormError } from 'src/common/exceptions/form-error.exception.ts';
 
 export interface JwtPayload {
   sub: string;
@@ -48,8 +44,20 @@ export class AuthService {
     };
   }
 
-  async register(params: registerData) {
-    const { email, password, firstName, lastName } = params;
+  async register(registerDto: RegisterDto) {
+    const { email, password, firstName, lastName } = registerDto;
+
+    const existingUserWithEmail = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (existingUserWithEmail) {
+      throw new FormError({
+        email: ["Cet email n'est pas disponible."],
+      });
+    }
 
     const cryptedPassword = await bcrypt.hash(password, 10);
 
