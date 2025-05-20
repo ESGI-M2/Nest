@@ -1,0 +1,54 @@
+services:
+  api:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    image: 5iw2-nest-api
+    container_name: 5iw2-nest-api
+    ports:
+      - 8000:8000 # API
+      - 9229:9229 # Debugging
+    env_file:
+      - ./back/.env
+    volumes:
+      - ./back:/app
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    image: 5iw2-nest-frontend
+    container_name: 5iw2-nest-frontend
+    ports:
+      - 3000:3000
+    env_file:
+      - ./front/.env
+    volumes:
+      - ./front:/app
+    depends_on:
+      - api
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+
+  db:
+    image: postgres
+    env_file:
+      - ./back/.env
+    volumes:
+      - 5iw2-nest:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  maildev:
+    image: maildev/maildev
+    ports:
+      - 1080:1080
+      - 1025:1025
+
+volumes:
+  5iw2-nest: {}

@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'src/prisma.service';
 import { UsersService } from 'src/users/users.service';
 
@@ -50,10 +50,13 @@ export class AuthService {
 
   async register(params: registerData) {
     const { email, password, firstName, lastName } = params;
-    return this.prisma.user.create({
+
+    const cryptedPassword = await bcrypt.hash(password, 10);
+
+    return await this.prisma.user.create({
       data: {
         email,
-        password: await bcrypt.hash(password, 10),
+        password: cryptedPassword,
         firstName,
         lastName,
       },
