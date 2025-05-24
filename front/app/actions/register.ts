@@ -21,6 +21,8 @@ export async function registerAPI(
         password: formData.password,
     });
 
+    console.log("Validated Fields:", validatedFields);
+
     if (!validatedFields.success) {
         return {
             errors: validatedFields.error.flatten().fieldErrors,

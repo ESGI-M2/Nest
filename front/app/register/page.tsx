@@ -96,16 +96,17 @@ export default function Register() {
     }
 
     return (
-        <div className="flex h-screen items-center justify-center mx-auto">
-            <Card className="min-w-[400px]">
-                <CardHeader>
-                    <CardTitle>Inscription</CardTitle>
-                </CardHeader>
-                <CardContent>
+        <div className="flex min-h-screen items-center justify-center bg-base-200 p-4">
+            <div className="card w-full max-w-sm shadow-lg bg-base-100">
+                <div className="card-body">
+                    <h2 className="card-title justify-center">Inscription</h2>
+
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
+                        <div className="form-control">
+                            <label className="label" htmlFor="email">
+                                <span className="label-text">Email</span>
+                            </label>
+                            <input
                                 type="email"
                                 name="email"
                                 value={state.data.email}
@@ -116,17 +117,20 @@ export default function Register() {
                                         value: e.target.value,
                                     })
                                 }
+                                className="input input-bordered w-full"
                             />
-                            {state?.errors?.email && (
+                            {state.errors.email && (
                                 <FormErrorMessage>
                                     {state.errors.email}
                                 </FormErrorMessage>
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="firstName">Prénom</Label>
-                            <Input
+                        <div className="form-control">
+                            <label className="label" htmlFor="firstName">
+                                <span className="label-text">Prénom</span>
+                            </label>
+                            <input
                                 type="text"
                                 name="firstName"
                                 value={state.data.firstName}
@@ -137,17 +141,20 @@ export default function Register() {
                                         value: e.target.value,
                                     })
                                 }
+                                className="input input-bordered w-full"
                             />
-                            {state?.errors?.firstName && (
+                            {state.errors.firstName && (
                                 <FormErrorMessage>
                                     {state.errors.firstName}
                                 </FormErrorMessage>
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="lastName">Nom</Label>
-                            <Input
+                        <div className="form-control">
+                            <label className="label" htmlFor="lastName">
+                                <span className="label-text">Nom</span>
+                            </label>
+                            <input
                                 type="text"
                                 name="lastName"
                                 value={state.data.lastName}
@@ -158,17 +165,20 @@ export default function Register() {
                                         value: e.target.value,
                                     })
                                 }
+                                className="input input-bordered w-full"
                             />
-                            {state?.errors?.lastName && (
+                            {state.errors.lastName && (
                                 <FormErrorMessage>
                                     {state.errors.lastName}
                                 </FormErrorMessage>
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input
+                        <div className="form-control">
+                            <label className="label" htmlFor="password">
+                                <span className="label-text">Mot de passe</span>
+                            </label>
+                            <input
                                 type="password"
                                 name="password"
                                 value={state.data.password}
@@ -179,34 +189,42 @@ export default function Register() {
                                         value: e.target.value,
                                     })
                                 }
+                                className="input input-bordered w-full"
                             />
-                            {state?.errors?.password && (
+                            {state.errors.password && (
                                 <FormErrorMessage>
                                     {state.errors.password}
                                 </FormErrorMessage>
                             )}
                         </div>
 
-                        <Button type="submit" className="w-full">
+                        <button
+                            type="submit"
+                            className="btn btn-primary w-full"
+                        >
                             S'inscrire
-                        </Button>
+                        </button>
 
-                        {state?.success === false && state?.message && (
-                            <small className="text-red-500">
+                        {state.success === false && state.message && (
+                            <small className="text-error">
                                 {state.message}
                             </small>
                         )}
                     </form>
-                </CardContent>
-                <CardFooter>
-                    <small>
-                        Vous avez déjà un compte?&nbsp;
-                        <Link href="/login" className="text-blue-500 font-bold">
-                            Connectez vous
-                        </Link>
-                    </small>
-                </CardFooter>
-            </Card>
+
+                    <div className="text-center mt-4">
+                        <small>
+                            Vous avez déjà un compte?&nbsp;
+                            <Link
+                                href="/login"
+                                className="text-primary font-bold"
+                            >
+                                Connectez-vous
+                            </Link>
+                        </small>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

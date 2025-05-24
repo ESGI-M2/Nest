@@ -96,16 +96,17 @@ export default function Login() {
     }
 
     return (
-        <div className="flex h-screen items-center justify-center mx-auto">
-            <Card className="min-w-md max-w-md">
-                <CardHeader>
-                    <CardTitle>Connexion</CardTitle>
-                </CardHeader>
-                <CardContent>
+        <div className="flex min-h-screen items-center justify-center bg-base-200 p-4">
+            <div className="card w-full max-w-sm shadow-lg bg-base-100">
+                <div className="card-body">
+                    <h2 className="card-title justify-center">Connexion</h2>
+
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
+                        <div className="form-control">
+                            <label className="label" htmlFor="email">
+                                <span className="label-text">Email</span>
+                            </label>
+                            <input
                                 type="email"
                                 name="email"
                                 value={state.data.email}
@@ -116,6 +117,7 @@ export default function Login() {
                                         value: e.target.value,
                                     })
                                 }
+                                className="input input-bordered w-full"
                             />
                             {state.errors.email && (
                                 <FormErrorMessage>
@@ -124,9 +126,11 @@ export default function Login() {
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="password">Mot de passe</Label>
-                            <Input
+                        <div className="form-control">
+                            <label className="label" htmlFor="password">
+                                <span className="label-text">Mot de passe</span>
+                            </label>
+                            <input
                                 type="password"
                                 name="password"
                                 value={state.data.password}
@@ -137,6 +141,7 @@ export default function Login() {
                                         value: e.target.value,
                                     })
                                 }
+                                className="input input-bordered w-full"
                             />
                             {state.errors.password && (
                                 <FormErrorMessage>
@@ -145,29 +150,33 @@ export default function Login() {
                             )}
                         </div>
 
-                        <Button type="submit" className="w-full">
+                        <button
+                            type="submit"
+                            className="btn btn-primary w-full"
+                        >
                             Se connecter
-                        </Button>
+                        </button>
 
                         {state.success === false && state.message && (
-                            <small className="text-red-500">
+                            <small className="text-error">
                                 {state.message}
                             </small>
                         )}
                     </form>
-                </CardContent>
-                <CardFooter>
-                    <small>
-                        Pas encore de compte?&nbsp;
-                        <Link
-                            href="/register"
-                            className="text-blue-500 font-bold"
-                        >
-                            Inscrivez-vous
-                        </Link>
-                    </small>
-                </CardFooter>
-            </Card>
+
+                    <div className="text-center mt-4">
+                        <small>
+                            Pas encore de compte?&nbsp;
+                            <Link
+                                href="/register"
+                                className="text-primary font-bold"
+                            >
+                                Inscrivez-vous
+                            </Link>
+                        </small>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
