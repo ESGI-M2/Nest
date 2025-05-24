@@ -1,16 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-
 import Link from "next/link";
 import { loginAPI } from "@/app/actions/login";
 import { useReducer } from "react";
