@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import Link from "next/link";
-import { registerAPI } from "../actions/register";
+import { registerAPI } from "@/app/actions/register";
 import { useReducer } from "react";
 import { FormErrorMessage } from "@/components/ui/form/FormErrorMessage";
 import { useRouter } from "next/navigation";

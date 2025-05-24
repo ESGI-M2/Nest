@@ -50,3 +50,38 @@ export const initialRegisterFormState: RegisterFormState = {
     success: false,
     loading: false,
 };
+
+export const LoginFormSchema = z.object({
+    email: z
+        .string()
+        .email({ message: "Veuillez entrer une adresse e-mail valide." })
+        .min(1, { message: "L'adresse e-mail ne doit pas être vide." })
+        .trim(),
+    password: z
+        .string()
+        .min(1, { message: "Le mot de passe ne doit pas être vide." })
+        .trim(),
+});
+
+export type LoginFormData = {
+    email: string;
+    password: string;
+};
+
+export type LoginFormErrors = Partial<Record<keyof LoginFormData, string[]>>;
+
+export type LoginFormState = {
+    data: LoginFormData;
+    errors: LoginFormErrors;
+    message?: string;
+    success: boolean;
+    loading: boolean;
+};
+
+export const initialLoginFormState: LoginFormState = {
+    data: { email: "", password: "" },
+    errors: {},
+    message: undefined,
+    success: false,
+    loading: false,
+};

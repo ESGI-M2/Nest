@@ -1,11 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'src/prisma.service';
 import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/registerDto';
-import EmailAlreadyExistsError from './exceptions/email-already-exists-error.exception.ts';
-import { FormError } from 'src/common/exceptions/form-error.exception.ts';
+import { SignInDto } from './dto/signInDto';
+import { EmailAlreadyTakenError, InvalidCredentialsError } from './auth.error';
 
 export interface JwtPayload {
   sub: string;
@@ -22,12 +22,22 @@ export class AuthService {
     private prisma: PrismaService,
   ) {}
 
-  async signIn(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOneByEmail(email);
+  async signIn(signInDto: SignInDto): Promise<any> {
+    const user = await this.usersService.findOneByEmail(signInDto.email);
 
-    if (!user?.password || !(await bcrypt.compare(pass, user?.password))) {
-      throw new UnauthorizedException();
+    if (!user) {
+      throw new InvalidCredentialsError();
     }
+
+    const isPasswordMatched = await bcrypt.compare(
+      signInDto.password,
+      user?.password || '',
+    );
+
+    if (!isPasswordMatched) {
+      throw new InvalidCredentialsError();
+    }
+
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
@@ -54,9 +64,7 @@ export class AuthService {
     });
 
     if (existingUserWithEmail) {
-      throw new FormError({
-        email: ["Cet email n'est pas disponible."],
-      });
+      throw new EmailAlreadyTakenError(email);
     }
 
     const cryptedPassword = await bcrypt.hash(password, 10);
