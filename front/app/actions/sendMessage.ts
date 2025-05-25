@@ -25,6 +25,8 @@ export async function sendMessageAPI(
     }
 
     await new Promise<void>((resolve, reject) => {
+      console.log("Sending message via socket:", validated.data);
+
       socket.emit(
         "message",
         {

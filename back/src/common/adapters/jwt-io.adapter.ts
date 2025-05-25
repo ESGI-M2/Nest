@@ -25,6 +25,9 @@ export class JwtIoAdapter extends IoAdapter {
           process.env.JWT_SECRET || 'default_secret',
         );
 
+        // set socket data
+        socket.data = payload;
+
         next();
       } catch (error: unknown) {
         return next(error instanceof Error ? error : new Error('Authentication error: Invalid token'));

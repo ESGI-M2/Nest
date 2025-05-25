@@ -50,14 +50,11 @@ export default function SendMessageForm({ recipientId }: { recipientId?: string 
     e.preventDefault();
     dispatch({ type: "SET_LOADING", loading: true });
 
-    console.log("Submitting message:", state.data);
-
     const response = await sendMessageAPI({
-      ...state.data,
-      recipientId : recipientId || '0',
+        ...state.data,
+        recipientId,
     });
 
-    console.log("Response from sendMessageAPI:", response);
 
     if (response.success) {
       dispatch({ type: "SET_SUCCESS", success: true });
@@ -73,39 +70,40 @@ export default function SendMessageForm({ recipientId }: { recipientId?: string 
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex items-center p-2 gap-2 border-t"
-    >
-      <input
-        type="text"
-        name="content"
-        placeholder="Votre message..."
-        value={state.data.content}
-        onChange={(e) =>
-          dispatch({
-            type: "FIELD_CHANGE",
-            field: "content",
-            value: e.target.value,
-          })
-        }
-        className="input input-bordered flex-1 rounded-full"
-      />
-      <button
-        type="submit"
-        className={`btn btn-circle btn-primary ${
-          state.loading ? "btn-disabled" : ""
-        }`}
-        disabled={state.loading}
+      <form
+          onSubmit={handleSubmit}
+          className="flex items-center p-2 gap-2 border-t"
       >
-        ➤
-      </button>
-      {state.errors.content && (
-        <FormErrorMessage>{state.errors.content}</FormErrorMessage>
-      )}
-      {state.success === false && state.message && (
-        <small className="text-error">{state.message}</small>
-      )}
-    </form>
+          <p>{recipientId}</p>
+          <input
+              type="text"
+              name="content"
+              placeholder="Votre message..."
+              value={state.data.content}
+              onChange={(e) =>
+                  dispatch({
+                      type: "FIELD_CHANGE",
+                      field: "content",
+                      value: e.target.value,
+                  })
+              }
+              className="input input-bordered flex-1 rounded-full"
+          />
+          <button
+              type="submit"
+              className={`btn btn-circle btn-primary ${
+                  state.loading ? "btn-disabled" : ""
+              }`}
+              disabled={state.loading}
+          >
+              ➤
+          </button>
+          {state.errors.content && (
+              <FormErrorMessage>{state.errors.content}</FormErrorMessage>
+          )}
+          {state.success === false && state.message && (
+              <small className="text-error">{state.message}</small>
+          )}
+      </form>
   );
 }

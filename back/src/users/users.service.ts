@@ -3,10 +3,27 @@ import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
 import { PrismaService } from '../prisma.service';
+import { UserNotFoundError } from './user.error';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
+
+  async getById(id: string) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id },
+      });
+
+      if (!user) {
+        throw new UserNotFoundError(id);
+      }
+
+      return user;
+    } catch (error: unknown) {
+      throw new UserNotFoundError(id);
+    }
+  }
 
   findAll(params: { page: number; limit: number }) {
     const { page, limit } = params;

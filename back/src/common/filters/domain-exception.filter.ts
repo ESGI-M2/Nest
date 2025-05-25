@@ -8,6 +8,7 @@ import {
 
 import { Response } from 'express';
 import { EmailAlreadyTakenError, InvalidCredentialsError } from 'src/auth/auth.error';
+import { UserNotFoundError } from 'src/users/user.error';
 
 @Catch(Error)
 export class DomainExceptionFilter implements ExceptionFilter {
@@ -29,6 +30,11 @@ export class DomainExceptionFilter implements ExceptionFilter {
       payload = {
         message:
           'Identifiants invalides. Veuillez vérifier votre e-mail et votre mot de passe.',
+      };
+    } else if (exception instanceof UserNotFoundError) {
+      status = HttpStatus.NOT_FOUND;
+      payload = {
+        message: `L'utilisateur n'a pas été trouvé.`,
       };
     } else if (exception instanceof HttpException) {
       const httpEx = exception;

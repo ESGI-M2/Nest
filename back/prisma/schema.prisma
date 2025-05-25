@@ -15,29 +15,38 @@ model User {
   firstName        String
   lastName         String
   profileColor     String?
-  sentMessages     Message[]
-  deliveries       MessageDelivery[]
+  conversations      UserOnConversation[]
+  messages     Message[]
   Token     Token?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt @default(now())
 }
 
-model Message {
-  id          String   @id @default(cuid())
-  content     String
-  senderId    String
-  createdAt   DateTime @default(now())
-  sender      User     @relation(fields: [senderId], references: [id])
-  deliveries  MessageDelivery[]
+model Conversation {
+  id        String    @id @default(cuid())
+  name      String?   // For group chats
+  users     UserOnConversation[]
+  messages  Message[]
+  createdAt DateTime  @default(now())
 }
 
-model MessageDelivery {
-  id          String   @id @default(cuid())
-  messageId   String
-  recipientId String
-  createdAt   DateTime @default(now())
-  message     Message  @relation(fields: [messageId], references: [id])
-  recipient   User    @relation(fields: [recipientId], references: [id])
+model UserOnConversation {
+  id             String        @id @default(cuid())
+  userId         String
+  conversationId String
+  joinedAt       DateTime      @default(now())
+  user           User          @relation(fields: [userId], references: [id])
+  conversation   Conversation  @relation(fields: [conversationId], references: [id])
+}
+
+model Message {
+  id             String        @id @default(cuid())
+  content        String
+  senderId       String
+  conversationId String
+  createdAt      DateTime      @default(now())
+  sender         User          @relation(fields: [senderId], references: [id])
+  conversation   Conversation  @relation(fields: [conversationId], references: [id])
 }
 
 model Token {

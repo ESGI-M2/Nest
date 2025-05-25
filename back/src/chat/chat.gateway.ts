@@ -3,7 +3,7 @@ import {
   WebSocketServer,
   SubscribeMessage,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
@@ -18,7 +18,7 @@ export class ChatGateway {
 
   @SubscribeMessage('message')
   async handleMessage(
-    client: any,
+    client: Socket,
     payload: { content: string; recipientId: string },
   ) {
     console.log('Received message from client:', payload);
@@ -27,7 +27,9 @@ export class ChatGateway {
     try {
       await validateOrReject(dto);
 
-      const senderId = client.user.id;
+      const socketData = client.data;
+
+      const { sub: senderId } = socketData;
 
       const message = await this.chatService.create(senderId, dto);
 
