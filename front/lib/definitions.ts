@@ -99,3 +99,52 @@ export const initialLoginFormState: LoginFormState = {
     success: false,
     loading: false,
 };
+
+export const MessageFormSchema = z.object({
+    content: z
+        .string()
+        .min(1, { message: "Le message ne doit pas être vide." })
+        .trim(),
+    recipientId: z.string().optional(),
+});
+
+export type MessageFormData = {
+    content: string;
+    recipientId?: string;
+};
+
+export type MessageFormErrors = Partial<
+    Record<keyof MessageFormData, string[]>
+>;
+
+export type MessageFormState = {
+    data: MessageFormData;
+    errors: MessageFormErrors;
+    message?: string;
+    success: boolean;
+    loading: boolean;
+};
+
+export const initialMessageFormState: MessageFormState = {
+    data: {
+        content: "",
+        recipientId: undefined,
+    },
+    errors: {},
+    message: undefined,
+    success: false,
+    loading: false,
+};
+
+export type AuthContextType = {
+    isAuthenticated: boolean;
+    token: string | null;
+    currentUser: {
+        id: string;
+        email: string;
+        firstName: string;
+        lastName: string;
+        profileColor: string | null;
+    } | null;
+    logout: () => void;
+};

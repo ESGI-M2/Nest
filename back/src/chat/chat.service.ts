@@ -1,22 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { SendMessageDto } from './dto/send-message.dto';
 
 @Injectable()
 export class ChatService {
   constructor(private prisma: PrismaService) {}
 
-  create(content: string, senderId: string) {
-    return this.prisma.message.create({
+  async create(senderId: string, dto: SendMessageDto) {
+    const message = await this.prisma.message.create({
       data: {
-        content,
+        content: dto.content,
         senderId,
       },
       include: {
         sender: true,
       },
     });
+
+    await this.prisma.messageDelivery.create({
+      data: {
+        messageId: message.id,
+        recipientId: dto.recipientId,
+      },
+    });
+
+    return message;
   }
-  
 
   findAll() {
     return this.prisma.message.findMany({
@@ -37,5 +46,4 @@ export class ChatService {
       },
     });
   }
-  
 }

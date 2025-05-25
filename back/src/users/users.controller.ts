@@ -8,7 +8,9 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Res,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ApiParam } from '@nestjs/swagger';
 import { User } from '@prisma/client';
@@ -31,6 +33,17 @@ export class UsersController {
     const users = await this.usersService.findAll(query);
 
     return users;
+  }
+
+  @Get('me')
+  getMe(@Req() req: RequestWithUser) {
+    const user = req.user;
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    return user;
   }
 
   @Get('/:id')

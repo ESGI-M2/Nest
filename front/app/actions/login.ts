@@ -9,8 +9,6 @@ type LoginResponse =
   | { success: true; token: string }
   | { success: false; errors?: LoginFormErrors; message?: string };
 
-const emptyErrors = {};
-
 export async function loginAPI(
   formData: LoginFormData
 ): Promise<LoginResponse> {

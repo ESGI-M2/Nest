@@ -8,23 +8,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Message {
-  id        String   @id @default(cuid())
-  content   String
-  senderId  String
-  createdAt DateTime @default(now())
-  sender    User     @relation(fields: [senderId], references: [id])
+model User {
+  id               String   @id @default(uuid())
+  email            String   @unique
+  password         String?
+  firstName        String
+  lastName         String
+  profileColor     String?
+  sentMessages     Message[]
+  deliveries       MessageDelivery[]
+  Token     Token?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt @default(now())
 }
 
-model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
-  password  String?
-  firstName String
-  lastName  String
-  birthDate DateTime  @default(now())
-  messages  Message[]
-  Token     Token?
+model Message {
+  id          String   @id @default(cuid())
+  content     String
+  senderId    String
+  createdAt   DateTime @default(now())
+  sender      User     @relation(fields: [senderId], references: [id])
+  deliveries  MessageDelivery[]
+}
+
+model MessageDelivery {
+  id          String   @id @default(cuid())
+  messageId   String
+  recipientId String
+  createdAt   DateTime @default(now())
+  message     Message  @relation(fields: [messageId], references: [id])
+  recipient   User    @relation(fields: [recipientId], references: [id])
 }
 
 model Token {
