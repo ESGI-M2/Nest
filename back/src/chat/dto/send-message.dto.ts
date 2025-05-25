@@ -13,9 +13,9 @@ export class SendMessageDto {
   @Type(() => String)
   content: string;
 
-  @ApiProperty({ description: 'Recipient user ID' })
+  @ApiProperty({ description: 'Conversation ID' })
   @IsString()
   @Transform(({ value }: { value: string }) => value.trim())
   @Type(() => String)
-  recipientId: string;
+  conversationId: string;
 }

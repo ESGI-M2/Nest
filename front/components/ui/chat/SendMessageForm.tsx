@@ -43,67 +43,74 @@ function reducer(state: MessageFormState, action: Action): MessageFormState {
   }
 }
 
-export default function SendMessageForm({ recipientId }: { recipientId?: string }) {
-  const [state, dispatch] = useReducer(reducer, initialMessageFormState);
+export default function SendMessageForm({
+    conversationId,
+}: {
+    conversationId?: string;
+}) {
+    const [state, dispatch] = useReducer(reducer, initialMessageFormState);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    dispatch({ type: "SET_LOADING", loading: true });
-
-    const response = await sendMessageAPI({
-        ...state.data,
-        recipientId,
-    });
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        dispatch({ type: "SET_LOADING", loading: true });
 
 
-    if (response.success) {
-      dispatch({ type: "SET_SUCCESS", success: true });
-      dispatch({ type: "RESET" });
-    } else if (response.errors) {
-      dispatch({ type: "SET_ERRORS", errors: response.errors });
-    } else {
-      dispatch({
-        type: "SET_MESSAGE",
-        message: response.message || "Erreur inconnue.",
-      });
-    }
-  };
+        console.log("Submitting message:", state.data);
 
-  return (
-      <form
-          onSubmit={handleSubmit}
-          className="flex items-center p-2 gap-2 border-t"
-      >
-          <p>{recipientId}</p>
-          <input
-              type="text"
-              name="content"
-              placeholder="Votre message..."
-              value={state.data.content}
-              onChange={(e) =>
-                  dispatch({
-                      type: "FIELD_CHANGE",
-                      field: "content",
-                      value: e.target.value,
-                  })
-              }
-              className="input input-bordered flex-1 rounded-full"
-          />
-          <button
-              type="submit"
-              className={`btn btn-circle btn-primary ${
-                  state.loading ? "btn-disabled" : ""
-              }`}
-              disabled={state.loading}
-          >
-              ➤
-          </button>
-          {state.errors.content && (
-              <FormErrorMessage>{state.errors.content}</FormErrorMessage>
-          )}
-          {state.success === false && state.message && (
-              <small className="text-error">{state.message}</small>
-          )}
-      </form>
-  );
+        const response = await sendMessageAPI({
+            ...state.data,
+            conversationId,
+        });
+
+        console.log("Response from sendMessageAPI:", response);
+
+        if (response.success) {
+            dispatch({ type: "SET_SUCCESS", success: true });
+            dispatch({ type: "RESET" });
+        } else if (response.errors) {
+            dispatch({ type: "SET_ERRORS", errors: response.errors });
+        } else {
+            dispatch({
+                type: "SET_MESSAGE",
+                message: response.message || "Erreur inconnue.",
+            });
+        }
+    };
+
+    return (
+        <form
+            onSubmit={handleSubmit}
+            className="flex items-center p-2 gap-2 border-t"
+        >
+            <input
+                type="text"
+                name="content"
+                placeholder="Votre message..."
+                value={state.data.content}
+                onChange={(e) =>
+                    dispatch({
+                        type: "FIELD_CHANGE",
+                        field: "content",
+                        value: e.target.value,
+                    })
+                }
+                className="input input-bordered flex-1 rounded-full"
+            />
+            <button
+                type="submit"
+                className={`btn btn-circle btn-primary ${
+                    state.loading ? "btn-disabled" : ""
+                }`}
+                disabled={state.loading}
+            >
+                ➤
+            </button>
+            {state.errors.content && (
+                <FormErrorMessage>{state.errors.content}</FormErrorMessage>
+            )}
+            {state.success === false && state.message && (
+                <small className="text-error">{state.message}</small>
+            )}
+        </form>
+    );
 }

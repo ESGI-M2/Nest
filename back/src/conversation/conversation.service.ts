@@ -56,4 +56,15 @@ export class ConversationService {
       throw new Error('Failed to create conversation');
     }
   }
+
+  async getMessagesInConversation(conversationId: string) {
+    const conversation = await this.getById(conversationId);
+
+    const messages = await this.prisma.message.findMany({
+      where: { conversationId: conversation.id },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    return messages;
+  }
 }

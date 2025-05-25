@@ -21,25 +21,36 @@ export class ChatGateway {
     client: Socket,
     payload: { content: string; recipientId: string },
   ) {
-    console.log('Received message from client:', payload);
-    const dto = plainToInstance(SendMessageDto, payload);
+    const validatedPayload = plainToInstance(SendMessageDto, payload);
 
     try {
-      await validateOrReject(dto);
+      await validateOrReject(validatedPayload);
 
       const socketData = client.data;
 
       const { sub: senderId } = socketData;
 
-      const message = await this.chatService.create(senderId, dto);
+      const message = await this.chatService.create(
+        validatedPayload.conversationId,
+        senderId,
+        validatedPayload.content,
+      );
 
-      // 4️⃣ Broadcast to everyone
       this.server.emit('message', message);
+
+      return {
+        status: 'ok',
+        message: 'Message sent successfully',
+      };
     } catch (errors) {
       console.error('Validation or other error:', errors);
       client.emit('error', {
         message: "Données invalides pour l'envoi du message.",
       });
+      return {
+        status: 'error',
+        message: "Données invalides pour l'envoi du message.",
+      };
     }
   }
 }

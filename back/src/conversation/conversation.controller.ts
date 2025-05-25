@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { ConversationService } from './conversation.service';
 import { CreateConversationDto } from './conversation.dto';
 
@@ -18,5 +18,10 @@ export class ConversationController {
       conversationPayload.recipients[0],
       conversationPayload.name,
     );
+  }
+
+  @Get(':id/messages')
+  async getMessagesInConversation(@Param('id') id: string) {
+    return await this.conversationService.getMessagesInConversation(id);
   }
 }

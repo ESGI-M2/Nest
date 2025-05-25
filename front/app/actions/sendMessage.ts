@@ -25,24 +25,26 @@ export async function sendMessageAPI(
     }
 
     await new Promise<void>((resolve, reject) => {
-      console.log("Sending message via socket:", validated.data);
-
-      socket.emit(
-        "message",
-        {
-          content: validated.data.content,
-          recipientId: validated.data.recipientId || '0'
-        },
-        (response: { status: string; errors?: MessageFormErrors; message?: string }) => {
-          if (response.status === "ok") {
-            console.log("Message sent successfully:", response);
-            resolve();
-          } else {
-            console.log("Error response from server:", response);
-            reject(response);
-          }
-        }
-      );
+        socket.emit(
+            "message",
+            {
+                content: validated.data.content,
+                conversationId: validated.data.conversationId,
+            },
+            (response: {
+                status: string;
+                errors?: MessageFormErrors;
+                message?: string;
+            }) => {
+                if (response.status === "ok") {
+                    console.log("Message sent successfully:", response);
+                    resolve();
+                } else {
+                    console.log("Error response from server:", response);
+                    reject(response);
+                }
+            }
+        );
     });
 
     return { success: true };

@@ -105,12 +105,14 @@ export const MessageFormSchema = z.object({
         .string()
         .min(1, { message: "Le message ne doit pas être vide." })
         .trim(),
-    recipientId: z.string().optional(),
+    conversationId: z
+        .string()
+        .cuid({ message: "L'ID de la conversation est requis." }),
 });
 
 export type MessageFormData = {
     content: string;
-    recipientId?: string;
+    conversationId?: string;
 };
 
 export type MessageFormErrors = Partial<
@@ -128,7 +130,7 @@ export type MessageFormState = {
 export const initialMessageFormState: MessageFormState = {
     data: {
         content: "",
-        recipientId: undefined,
+        conversationId: undefined,
     },
     errors: {},
     message: undefined,
