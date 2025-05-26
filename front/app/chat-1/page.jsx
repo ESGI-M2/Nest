@@ -21,8 +21,6 @@ export default function Chat() {
     }
 
     function onFooEvent(value) {
-      console.log(value);
-
       setFooEvents((previous) => [...previous, value]);
     }
 

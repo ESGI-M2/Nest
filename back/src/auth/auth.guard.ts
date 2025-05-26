@@ -50,7 +50,6 @@ export class AuthGuard implements CanActivate {
    * Extract JWT token from the cookies.
    */
   private extractTokenFromCookies(request: Request): string | undefined {
-    console.log(request.cookies);
     // The cookie name is typically 'token', adjust if yours differs
     return request.cookies?.token;
   }

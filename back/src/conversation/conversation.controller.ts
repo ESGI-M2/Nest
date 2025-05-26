@@ -27,7 +27,11 @@ export class ConversationController {
   }
 
   @Get(':id/messages')
-  async getMessagesInConversation(@Param('id') id: string) {
-    return await this.conversationService.getMessagesInConversation(id);
+  async getMessagesInConversation(@Param('id') id: string, @Req() req) {
+    const userId = req.user.sub;
+    return await this.conversationService.getMessagesInConversationAsUser(
+      id,
+      userId,
+    );
   }
 }

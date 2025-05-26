@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { ConversationNotFoundError } from './conversation.error';
+import {
+  ConversationNotFoundError,
+  UserNotPartOfConversationError,
+} from './conversation.error';
 import { UsersService } from 'src/users/users.service';
 import { UserNotFoundError } from 'src/users/user.error';
+import { Conversation } from '@prisma/client';
 
 @Injectable()
 export class ConversationService {
@@ -72,8 +76,24 @@ export class ConversationService {
     }
   }
 
-  async getMessagesInConversation(conversationId: string) {
+  async getMessagesInConversationAsUser(
+    conversationId: string,
+    userId: string,
+  ) {
     const conversation = await this.getById(conversationId);
+
+    if (!conversation) {
+      throw new ConversationNotFoundError(conversationId);
+    }
+
+    const isUserPartOfConversation = await this.isUserInConversation(
+      conversationId,
+      userId,
+    );
+
+    if (!isUserPartOfConversation) {
+      throw new UserNotPartOfConversationError(conversationId, userId);
+    }
 
     const messages = await this.prisma.message.findMany({
       where: { conversationId: conversation.id },
@@ -81,5 +101,20 @@ export class ConversationService {
     });
 
     return messages;
+  }
+
+  private async isUserInConversation(
+    conversationId: string,
+    userId: string,
+  ): Promise<boolean> {
+    try {
+      const record = await this.prisma.userOnConversation.findFirst({
+        where: { conversationId, userId },
+      });
+      return Boolean(record);
+    } catch (error) {
+      console.error('Error checking user in conversation:', error);
+      return false;
+    }
   }
 }

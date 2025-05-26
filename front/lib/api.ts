@@ -12,6 +12,10 @@ api.interceptors.response.use(
             if (typeof window !== "undefined") {
                 window.location.href = "/login";
             }
+        } else if (error.response?.status === 403) {
+            if (typeof window !== "undefined") {
+                window.location.href = "/";
+            }
         }
         return Promise.reject(error);
     }

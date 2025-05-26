@@ -4,6 +4,8 @@ export async function fetchConversationMessages(conversationId: string) {
   try {
     const response = await api.get(`/conversations/${conversationId}/messages`);
 
+    console.log("Response from API:", response);
+
     if (response.status === 200) {
       return { success: true, messages: response.data };
     } else {

@@ -8,7 +8,10 @@ import {
 
 import { Response } from 'express';
 import { EmailAlreadyTakenError, InvalidCredentialsError } from 'src/auth/auth.error';
-import { ConversationNotFoundError } from 'src/conversation/conversation.error';
+import {
+  ConversationNotFoundError,
+  UserNotPartOfConversationError,
+} from 'src/conversation/conversation.error';
 import { UserNotFoundError } from 'src/users/user.error';
 
 @Catch(Error)
@@ -42,10 +45,17 @@ export class DomainExceptionFilter implements ExceptionFilter {
       payload = {
         message: `L'utilisateur n'a pas été trouvé.`,
       };
+    } else if (exception instanceof UserNotPartOfConversationError) {
+      status = HttpStatus.FORBIDDEN;
+      payload = {
+        message: `L'utilisateur n'est pas membre de cette conversation.`,
+      };
     } else if (exception instanceof HttpException) {
       const httpEx = exception;
       status = httpEx.getStatus();
       payload = httpEx.getResponse();
+    } else {
+      throw exception;
     }
 
     res.status(status).json(payload);

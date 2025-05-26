@@ -87,6 +87,14 @@ export default function ConversationList() {
         router.push(`/chat/${id}`);
     };
 
+    if (state.data.length === 0 && !state.loading) {
+        return null;
+    }
+
+    if (state.loading) {
+        return <p>Chargement...</p>;
+    }
+
     return (
         <div className="w-full bg-base-100 rounded-md p-4">
             <h2 className="text-lg font-semibold mb-2">Conversations</h2>

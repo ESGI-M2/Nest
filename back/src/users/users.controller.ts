@@ -46,14 +46,6 @@ export class UsersController {
     return user;
   }
 
-  @Get('/:id')
-  @ApiParam({ name: 'id' })
-  findById(@Param('id') id) {
-    console.log(id);
-
-    return 'Find all users';
-  }
-
   @Post()
   async createUser(@Body() createUser: CreateOrUpdateUserDto) {
     return await this.usersService.createUser(createUser);

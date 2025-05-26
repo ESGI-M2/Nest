@@ -10,7 +10,10 @@ import { validateOrReject } from 'class-validator';
 import { SendMessageDto } from './dto/send-message.dto';
 
 @WebSocketGateway({
-  cors: { origin: 'http://localhost:3000', credentials: true },
+  cors: {
+    origin: process.env.CROSS_ORIGIN || 'http://localhost:3000',
+    credentials: true,
+  },
 })
 export class ChatGateway {
   @WebSocketServer()
