@@ -1,19 +1,8 @@
-import axios, { AxiosHeaders } from "axios";
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-});
-
-api.interceptors.request.use((config) => {
-  const token = window.localStorage.getItem("token");
-
-  return {
-    ...config,
-    headers: new AxiosHeaders({
-      ...config.headers,
-      Authorization: `Bearer ${token}`,
-    }),
-  };
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    withCredentials: true,
 });
 
 export default api;

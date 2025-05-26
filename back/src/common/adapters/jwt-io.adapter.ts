@@ -2,6 +2,7 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 import { INestApplicationContext } from '@nestjs/common';
 import { ServerOptions, Server } from 'socket.io';
 import * as jwt from 'jsonwebtoken';
+import * as cookie from 'cookie';
 
 export class JwtIoAdapter extends IoAdapter {
   constructor(private app: INestApplicationContext) {
@@ -13,7 +14,11 @@ export class JwtIoAdapter extends IoAdapter {
 
     // Secure JWT authentication for WebSocket connections
     server.use((socket, next) => {
-      const token = (socket.handshake.auth as { token?: string })?.token;
+      const cookieHeader = socket.handshake.headers.cookie || '';
+
+      const cookies = cookie.parse(cookieHeader);
+
+      const token = cookies.token;
 
       if (!token) {
         return next(new Error('Authentication error: No token provided'));
@@ -30,7 +35,11 @@ export class JwtIoAdapter extends IoAdapter {
 
         next();
       } catch (error: unknown) {
-        return next(error instanceof Error ? error : new Error('Authentication error: Invalid token'));
+        return next(
+          error instanceof Error
+            ? error
+            : new Error('Authentication error: Invalid token'),
+        );
       }
     });
 

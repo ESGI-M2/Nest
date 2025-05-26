@@ -29,8 +29,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async findAll(@Query() query: FindAllUsersDto) {
-    const users = await this.usersService.findAll(query);
+  async findAll() {
+    const users = await this.usersService.findAll();
 
     return users;
   }

@@ -6,7 +6,7 @@ export const getSocket = (): Socket => {
   if (!socket && typeof window !== "undefined") {
     const token = localStorage.getItem("token");
     socket = io(process.env.NEXT_PUBLIC_API_URL!, {
-      auth: { token },
+        withCredentials: true,
     });
 
     console.log("Connecting to socket...", token);

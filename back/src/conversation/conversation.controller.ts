@@ -15,9 +15,15 @@ export class ConversationController {
 
     return await this.conversationService.create(
       senderId,
-      conversationPayload.recipients[0],
+      conversationPayload.recipients,
       conversationPayload.name,
     );
+  }
+
+  @Get()
+  async getConversationsForCurrentUser(@Req() req) {
+    const userId = req.user.sub;
+    return await this.conversationService.getConversationsForUser(userId);
   }
 
   @Get(':id/messages')

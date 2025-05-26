@@ -25,12 +25,21 @@ export class UsersService {
     }
   }
 
-  findAll(params: { page: number; limit: number }) {
-    const { page, limit } = params;
-    return this.prisma.user.findMany({
-      skip: limit * (page - 1),
-      take: limit,
+  async findAll() {
+    const users = await this.prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        profileColor: true,
+        createdAt: true,
+        updatedAt: true,
+        // Exclude password
+      },
     });
+
+    return users;
   }
 
   findOneByEmail(email: string) {

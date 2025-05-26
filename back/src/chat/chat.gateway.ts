@@ -9,7 +9,9 @@ import { plainToInstance } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import { SendMessageDto } from './dto/send-message.dto';
 
-@WebSocketGateway({ cors: { origin: '*' } })
+@WebSocketGateway({
+  cors: { origin: 'http://localhost:3000', credentials: true },
+})
 export class ChatGateway {
   @WebSocketServer()
   server: Server;

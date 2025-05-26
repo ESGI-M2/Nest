@@ -23,23 +23,39 @@ export class ConversationService {
     return conversation;
   }
 
-  async create(sender: string, recipient: string, name?: string) {
+  async getConversationsForUser(userId: string) {
+    const user = await this.userService.getById(userId);
+    if (!user) {
+      throw new UserNotFoundError(userId);
+    }
+
+    const conversations = await this.prisma.conversation.findMany({
+      where: {
+        users: {
+          some: {
+            userId: user.id,
+          },
+        },
+      },
+    });
+
+    return conversations;
+  }
+
+  async create(sender: string, recipients: string[], name?: string) {
     try {
-      const senderUser = await this.userService.getById(sender);
-      const recipientUser = await this.userService.getById(recipient);
+      const allIds = [sender, ...recipients];
+      const users = await Promise.all(
+        allIds.map((id) => this.userService.getById(id)),
+      );
+
+      const createUsers = users.map((u) => ({ userId: u.id }));
 
       const conversation = await this.prisma.conversation.create({
         data: {
           name,
           users: {
-            create: [
-              {
-                userId: senderUser.id,
-              },
-              {
-                userId: recipientUser.id,
-              },
-            ],
+            create: createUsers,
           },
         },
         include: {
@@ -52,7 +68,6 @@ export class ConversationService {
       if (error instanceof UserNotFoundError) {
         throw error;
       }
-
       throw new Error('Failed to create conversation');
     }
   }
