@@ -6,7 +6,6 @@ import {
 } from './conversation.error';
 import { UsersService } from 'src/users/users.service';
 import { UserNotFoundError } from 'src/users/user.error';
-import { Conversation } from '@prisma/client';
 
 @Injectable()
 export class ConversationService {
@@ -98,6 +97,9 @@ export class ConversationService {
     const messages = await this.prisma.message.findMany({
       where: { conversationId: conversation.id },
       orderBy: { createdAt: 'asc' },
+       include: {
+        sender: true,
+      }
     });
 
     return messages;

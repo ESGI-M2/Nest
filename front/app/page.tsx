@@ -15,7 +15,8 @@ export default async function HomePage() {
             token,
             new TextEncoder().encode(process.env.JWT_SECRET!)
         );
-    } catch {
+    } catch (e) {
+        console.error('erreur:' + e)
         redirect("/login");
     }
 

@@ -1,59 +1,122 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import api from '@/lib/api'; // Ton client axios
-import { useAuth } from '@/context/authContext'; // Tu dois connaître l'user connecté
+import api from '@/lib/api';
+import { useAuth } from '@/context/authContext';
 
 export default function ProfileColorPicker() {
   const { state: authState } = useAuth();
   const userId = authState.currentUser?.sub;
 
   const [color, setColor] = useState('#cccccc');
-  const [loading, setLoading] = useState(false);
+  const [colorLoading, setColorLoading] = useState(false);
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [infoLoading, setInfoLoading] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
       if (!userId) return;
       const res = await api.get(`/users/${userId}`);
-      setColor(res.data.profileColor || '#cccccc');
+      const user = res.data;
+      setColor(user.profileColor || '#cccccc');
+      setFirstName(user.firstName || '');
+      setLastName(user.lastName || '');
+      setEmail(user.email || '');
     };
     fetchUser();
   }, [userId]);
 
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newColor = e.target.value;
-    setColor(newColor);
 
+  useEffect(() => {
+    if (!userId) return;
+    const updateColor = async () => {
+      setColorLoading(true);
+      try {
+        await api.put(`/users/${userId}/color`, { profileColor: color });
+      } catch (err) {
+        console.error('Failed to update color', err);
+      } finally {
+        setColorLoading(false);
+      }
+    };
+
+    updateColor();
+  }, [color, userId]);
+
+  const handleSave = async () => {
+    if (!userId) return;
+    setInfoLoading(true);
     try {
-      setLoading(true);
-      await api.put(`/users/${userId}/color`, {
-        profileColor: newColor,
+      await api.put(`/users/${userId}`, {
+        firstName,
+        lastName,
+        email,
       });
+
     } catch (err) {
-      console.error('Failed to update color', err);
+      console.error('Failed to update user info', err);
     } finally {
-      setLoading(false);
+      setInfoLoading(false);
     }
   };
 
   return (
-    <div className="p-4 space-y-4">
-      <h2 className="text-lg font-semibold">Changer la couleur de profil</h2>
+    <div className="p-4 max-w-md mx-auto space-y-8">
+      <div className="flex flex-col items-center space-y-2">
+        <h2 className="text-lg font-semibold">Changer la couleur de profil</h2>
+        <div
+          className="w-16 h-16 rounded-full border-2"
+          style={{ backgroundColor: color }}
+        />
+        <input
+          type="color"
+          value={color}
+          onChange={e => setColor(e.target.value)}
+          disabled={colorLoading}
+          className="cursor-pointer"
+        />
+        {colorLoading && (
+          <p className="text-sm text-gray-500">Mise à jour de la couleur...</p>
+        )}
+      </div>
 
-      <div
-        className="w-16 h-16 rounded-full border-2"
-        style={{ backgroundColor: color }}
-      />
-
-      <input
-        type="color"
-        value={color}
-        onChange={handleChange}
-        disabled={loading}
-        className="cursor-pointer"
-      />
-
-      {loading && <p className="text-sm text-gray-500">Mise à jour...</p>}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold">Modifier les informations</h2>
+        <input
+          type="text"
+          value={firstName}
+          onChange={e => setFirstName(e.target.value)}
+          placeholder="Prénom"
+          className="input input-bordered w-full"
+          disabled={infoLoading}
+        />
+        <input
+          type="text"
+          value={lastName}
+          onChange={e => setLastName(e.target.value)}
+          placeholder="Nom"
+          className="input input-bordered w-full"
+          disabled={infoLoading}
+        />
+        <input
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="Email"
+          className="input input-bordered w-full"
+          disabled={infoLoading}
+        />
+        <button
+          onClick={handleSave}
+          disabled={infoLoading}
+          className="btn btn-primary w-full"
+        >
+          {infoLoading ? 'Mise à jour...' : 'Sauvegarder'}
+        </button>
+      </div>
     </div>
   );
 }
