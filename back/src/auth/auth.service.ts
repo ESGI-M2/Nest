@@ -12,6 +12,7 @@ export interface JwtPayload {
   email: string;
   firstName: string;
   lastName: string;
+  profileColor: string | null;
 }
 
 @Injectable()
@@ -43,13 +44,16 @@ export class AuthService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      profileColor: user.profileColor,
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = user;
 
+    const newAccessToken = await this.jwtService.signAsync(payload);
+
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: newAccessToken,
       user: userWithoutPassword,
     };
   }

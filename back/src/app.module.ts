@@ -14,6 +14,7 @@ import { TokensModule } from './tokens/tokens.module';
 import { TokensService } from './tokens/tokens.service';
 import { UsersModule } from './users/users.module';
 import { ChatModule } from './chat/chat.module';
+import { ConversationModule } from './conversation/conversation.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ChatModule } from './chat/chat.module';
     AuthModule,
     UsersModule,
     ChatModule,
+    ConversationModule,
     MailerModule.forRoot({
       transport: {
         host: 'localhost',

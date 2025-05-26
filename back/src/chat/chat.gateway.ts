@@ -3,10 +3,15 @@ import {
   WebSocketServer,
   SubscribeMessage,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
+import { plainToInstance } from 'class-transformer';
+import { validateOrReject } from 'class-validator';
+import { SendMessageDto } from './dto/send-message.dto';
 
-@WebSocketGateway({ cors: { origin: '*' } })
+@WebSocketGateway({
+  cors: { origin: 'http://localhost:3000', credentials: true },
+})
 export class ChatGateway {
   @WebSocketServer()
   server: Server;
@@ -14,8 +19,40 @@ export class ChatGateway {
   constructor(private chatService: ChatService) {}
 
   @SubscribeMessage('message')
-  async handleMessage(client: any, payload: { content: string; sender: string }) {
-    const message = await this.chatService.create(payload.content, payload.sender);
-    this.server.emit('message', message);
+  async handleMessage(
+    client: Socket,
+    payload: { content: string; recipientId: string },
+  ) {
+    const validatedPayload = plainToInstance(SendMessageDto, payload);
+
+    try {
+      await validateOrReject(validatedPayload);
+
+      const socketData = client.data;
+
+      const { sub: senderId } = socketData;
+
+      const message = await this.chatService.create(
+        validatedPayload.conversationId,
+        senderId,
+        validatedPayload.content,
+      );
+
+      this.server.emit('message', message);
+
+      return {
+        status: 'ok',
+        message: 'Message sent successfully',
+      };
+    } catch (errors) {
+      console.error('Validation or other error:', errors);
+      client.emit('error', {
+        message: "Données invalides pour l'envoi du message.",
+      });
+      return {
+        status: 'error',
+        message: "Données invalides pour l'envoi du message.",
+      };
+    }
   }
 }

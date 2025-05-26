@@ -73,6 +73,7 @@ export default function Login() {
 
         if (response.success) {
             dispatch({ type: "SET_SUCCESS", success: true });
+            localStorage.setItem("token", response.token);
             router.push("/");
         } else if (response.errors) {
             dispatch({ type: "SET_ERRORS", errors: response.errors });

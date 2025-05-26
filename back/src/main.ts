@@ -3,9 +3,19 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { DomainExceptionFilter } from './common/filters/domain-exception.filter';
+import { JwtIoAdapter } from './common/adapters/jwt-io.adapter';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule);
+
+  app.use(cookieParser());
+
+  app.enableCors({
+    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    credentials: true,
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -14,6 +24,7 @@ async function bootstrap() {
   );
 
   app.useGlobalFilters(new DomainExceptionFilter());
+  app.useWebSocketAdapter(new JwtIoAdapter(app));
 
   const config = new DocumentBuilder()
     .setTitle('5IW2 MyGuez')
