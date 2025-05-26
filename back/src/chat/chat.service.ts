@@ -5,18 +5,23 @@ import { PrismaService } from 'src/prisma.service';
 export class ChatService {
   constructor(private prisma: PrismaService) {}
 
-  create(content: string, senderId: string) {
-    return this.prisma.message.create({
-      data: {
-        content,
-        senderId,
-      },
-      include: {
-        sender: true,
-      },
-    });
+  async create(conversationId, senderId, content: string) {
+    try {
+      const message = await this.prisma.message.create({
+        data: {
+          conversationId,
+          senderId,
+          content,
+        },
+        include: {
+          sender: true,
+        },
+      });
+      return message;
+    } catch (error) {
+      throw new Error('Failed to create message');
+    }
   }
-  
 
   findAll() {
     return this.prisma.message.findMany({
@@ -37,5 +42,4 @@ export class ChatService {
       },
     });
   }
-  
 }

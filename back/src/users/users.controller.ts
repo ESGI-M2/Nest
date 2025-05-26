@@ -8,13 +8,16 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Res,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ApiParam } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Response } from 'express';
 import { Public } from 'src/decorators/Public';
 import { CreateOrUpdateUserDto } from './dto/createOrUpdateUser';
+import {  CreateOrUpdateColorUserDto } from './dto/createOrUpdateColorUser';
 import { FindAllUsersDto } from './dto/usersList';
 import { UsersService } from './users.service';
 
@@ -27,18 +30,28 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async findAll(@Query() query: FindAllUsersDto) {
-    const users = await this.usersService.findAll(query);
+  async findAll() {
+    const users = await this.usersService.findAll();
 
     return users;
   }
 
+  @Get('me')
+  getMe(@Req() req: RequestWithUser) {
+    const user = req.user;
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    return user;
+  }
+
   @Get('/:id')
   @ApiParam({ name: 'id' })
-  findById(@Param('id') id) {
-    console.log(id);
-
-    return 'Find all users';
+  async findById(@Param('id') id: string): Promise<User | null> {
+    const user = await this.usersService.getById(id);
+    return user;
   }
 
   @Post()
@@ -55,7 +68,15 @@ export class UsersController {
     return await this.usersService.updatePassword(token, password);
   }
 
-  @Put(':id')
+  @Put(':id/color')
+  async updateColorUser(
+    @Param('id') id: string,
+    @Body() updateUser: CreateOrUpdateColorUserDto,
+  ) {
+    return await this.usersService.updateUser(id, updateUser);
+  }
+
+    @Put(':id')
   async updateUser(
     @Param('id') id: string,
     @Body() updateUser: CreateOrUpdateUserDto,

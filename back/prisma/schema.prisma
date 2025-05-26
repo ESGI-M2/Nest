@@ -8,23 +8,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Message {
-  id        String   @id @default(cuid())
-  content   String
-  senderId  String
-  createdAt DateTime @default(now())
-  sender    User     @relation(fields: [senderId], references: [id])
+model User {
+  id               String   @id @default(uuid())
+  email            String   @unique
+  password         String?
+  firstName        String
+  lastName         String
+  profileColor     String?
+  conversations      UserOnConversation[]
+  messages     Message[]
+  Token     Token?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt @default(now())
 }
 
-model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
-  password  String?
-  firstName String
-  lastName  String
-  birthDate DateTime  @default(now())
+model Conversation {
+  id        String    @id @default(cuid())
+  name      String?   // For group chats
+  users     UserOnConversation[]
   messages  Message[]
-  Token     Token?
+  createdAt DateTime  @default(now())
+}
+
+model UserOnConversation {
+  id             String        @id @default(cuid())
+  userId         String
+  conversationId String
+  joinedAt       DateTime      @default(now())
+  user           User          @relation(fields: [userId], references: [id])
+  conversation   Conversation  @relation(fields: [conversationId], references: [id])
+}
+
+model Message {
+  id             String        @id @default(cuid())
+  content        String
+  senderId       String
+  conversationId String
+  createdAt      DateTime      @default(now())
+  sender         User          @relation(fields: [senderId], references: [id])
+  conversation   Conversation  @relation(fields: [conversationId], references: [id])
 }
 
 model Token {

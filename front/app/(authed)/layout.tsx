@@ -1,20 +1,28 @@
-"use client";
+import { AuthProvider } from "@/context/authContext";
 
-import Header from "@/components/Header";
+import SideMenu from "@/components/SideMenu";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import NavBar from "@/components/ui/navbar";
+import { ConversationsProvider } from "@/context/conversationContext";
 
 export default function AuthedLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <SidebarProvider>
-      <Header />
-      <main className="px-4 w-full">
-        <SidebarTrigger />
-        {children}
-      </main>
-    </SidebarProvider>
-  );
+    return (
+        <SidebarProvider>
+            <AuthProvider>
+                <ConversationsProvider>
+                    <div className="p-4 bg-base-300">
+                        <SideMenu />
+                    </div>
+                    <main className="w-full flex flex-col">
+                        <NavBar />
+                        {children}
+                    </main>
+                </ConversationsProvider>
+            </AuthProvider>
+        </SidebarProvider>
+    );
 }

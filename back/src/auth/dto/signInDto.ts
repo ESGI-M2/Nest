@@ -1,15 +1,15 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsString, IsNotEmpty } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 
 export class SignInDto {
-  @ApiProperty()
-  @IsEmail()
+  @IsEmail({}, { message: 'Veuillez fournir une adresse email valide.' })
+  @Transform(({ value }: { value: string }) => value.trim())
   @Type(() => String)
   email: string;
 
-  @ApiProperty()
-  @IsString()
+  @IsString({ message: 'Le mot de passe doit être une chaîne de caractères.' })
+  @IsNotEmpty({ message: 'Le mot de passe ne doit pas être vide.' })
+  @Transform(({ value }: { value: string }) => value.trim())
   @Type(() => String)
   password: string;
 }

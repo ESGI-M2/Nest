@@ -1,21 +1,24 @@
-import axios, { AxiosHeaders } from "axios";
-
-console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    withCredentials: true,
 });
 
-api.interceptors.request.use((config) => {
-  const token = window.localStorage.getItem("token");
-
-  return {
-    ...config,
-    headers: new AxiosHeaders({
-      ...config.headers,
-      Authorization: `Bearer ${token}`,
-    }),
-  };
-});
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            if (typeof window !== "undefined") {
+                window.location.href = "/login";
+            }
+        } else if (error.response?.status === 403) {
+            if (typeof window !== "undefined") {
+                window.location.href = "/";
+            }
+        }
+        return Promise.reject(error);
+    }
+);
 
 export default api;

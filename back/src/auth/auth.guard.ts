@@ -28,7 +28,7 @@ export class AuthGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest<Request>();
-    const token = this.extractTokenFromHeader(request);
+    const token = this.extractTokenFromCookies(request);
     if (!token) {
       throw new UnauthorizedException();
     }
@@ -46,8 +46,11 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+  /**
+   * Extract JWT token from the cookies.
+   */
+  private extractTokenFromCookies(request: Request): string | undefined {
+    // The cookie name is typically 'token', adjust if yours differs
+    return request.cookies?.token;
   }
 }

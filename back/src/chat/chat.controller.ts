@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ChatService } from './chat.service';
 
-@Controller('chat')
+@Controller('chats')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
@@ -12,7 +12,6 @@ export class ChatController {
 
   @Get(':userId')
   getMessagesByUser(@Param('userId') userId: string) {
-  return this.chatService.getMessagesByUser(userId);
-}
-
+    return this.chatService.getMessagesByUser(userId);
+  }
 }
