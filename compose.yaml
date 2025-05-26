@@ -3,15 +3,20 @@ services:
     build:
       context: ./back
       dockerfile: Dockerfile
-    image: 5iw2-nest-api
     container_name: 5iw2-nest-api
     ports:
       - 8000:8000 # API
       - 9229:9229 # Debugging
+    command: >
+      sh -c "
+        npx prisma migrate dev --name init --preview-feature &&
+        npm run start:dev
+      "
     env_file:
       - ./back/.env
     volumes:
       - ./back:/app
+      - /app/node_modules
     depends_on:
       - db
 
@@ -19,7 +24,6 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile
-    image: 5iw2-nest-frontend
     container_name: 5iw2-nest-frontend
     ports:
       - 3000:3000
@@ -27,6 +31,7 @@ services:
       - ./front/.env
     volumes:
       - ./front:/app
+      - /app/node_modules
     depends_on:
       - api
 
@@ -37,6 +42,7 @@ services:
 
   db:
     image: postgres
+    container_name: 5iw2-nest-db
     env_file:
       - ./back/.env
     volumes:
@@ -46,6 +52,7 @@ services:
 
   maildev:
     image: maildev/maildev
+    container_name: 5iw2-nest-maildev
     ports:
       - 1080:1080
       - 1025:1025

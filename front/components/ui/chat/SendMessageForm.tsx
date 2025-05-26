@@ -54,9 +54,6 @@ export default function SendMessageForm({
         e.preventDefault();
         dispatch({ type: "SET_LOADING", loading: true });
 
-
-        console.log("Submitting message:", state.data);
-
         const response = await sendMessageAPI({
             ...state.data,
             conversationId,

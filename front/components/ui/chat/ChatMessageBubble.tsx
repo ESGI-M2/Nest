@@ -8,28 +8,30 @@ type ChatMessageProps = {
 };
 
 export function ChatMessageBubble({
-  content,
-  fromMe,
-  profileColor,
-  firstLetter,
+    name,
+    content,
+    fromMe,
+    profileColor,
+    firstLetter,
+    dateTime,
 }: ChatMessageProps) {
-  return (
-    <div className={`flex ${fromMe ? "justify-end" : "justify-start"} my-1`}>
-      {!fromMe && (
-        <Bubble
-          firstLetter={firstLetter}
-          profileColor={profileColor}
-        />
-      )}
-      <div
-        className={`rounded-xl px-3 py-2 max-w-[60%] ${
-          fromMe
-            ? "bg-primary text-white"
-            : "bg-base-200 text-base-content"
-        }`}
-      >
-        {content}
-      </div>
-    </div>
-  );
+    return (
+        <div className={`chat ${fromMe ? "chat-end" : "chat-start"}`}>
+            <div className="chat-image">
+                {!fromMe && (
+                    <Bubble
+                        firstLetter={firstLetter}
+                        profileColor={profileColor}
+                    />
+                )}
+            </div>
+            <div className="chat-header">{fromMe ? "" : name}</div>
+            <div
+                className={`chat-bubble ${fromMe ? "chat-bubble-primary" : ""}`}
+            >
+                {content}
+            </div>
+            <div className="chat-footer opacity-50">{dateTime}</div>
+        </div>
+    );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import api from "@/lib/api";
+import { getSocket } from "@/lib/socket";
 import { createContext, useContext, useReducer, useEffect } from "react";
 
 type CurrentUser = {
@@ -103,7 +104,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         dispatch({ type: "LOGIN", token, user });
     };
 
-    const logout = () => {
+    const logout = async () => {
+        try {
+            await api.post("/auth/logout");
+            const socket = await getSocket();
+            if (socket) {
+                socket.disconnect();
+                socket.close();
+            }
+        } catch (error) {
+            console.error("Logout failed", error);
+        }
         localStorage.removeItem("token");
         dispatch({ type: "LOGOUT" });
     };

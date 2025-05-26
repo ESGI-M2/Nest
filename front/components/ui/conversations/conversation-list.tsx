@@ -19,6 +19,10 @@ export default function ConversationList() {
         router.push(`/chat/${id}`);
     };
 
+    if (!convs || convs.length === 0) {
+        return null;
+    }
+
     return (
         <div className="w-full bg-base-100 rounded-md p-4">
             <h2 className="text-lg font-semibold mb-2">Conversations</h2>

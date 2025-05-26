@@ -8,6 +8,8 @@ import { fetchConversationMessages } from "./actions";
 import { ChatMessageBubble } from "@/components/ui/chat/ChatMessageBubble";
 import { useAuth } from "@/context/authContext";
 import { getSocket } from "@/lib/socket";
+import { formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
 
 export const Message = z.object({
     id: z.string(),
@@ -109,17 +111,27 @@ export default function ChatPage() {
             <div className="flex-1 overflow-y-auto p-4 space-y-2">
                 {state.loading && <p>Loading...</p>}
                 {state.error && <p className="text-error">{state.error}</p>}
-       {state.data.map((msg) => {
-        return (
-            <ChatMessageBubble
-                key={msg.id}
-                content={msg.content}
-                fromMe={msg.sender.id === authState.currentUser?.sub}
-                profileColor={msg.sender?.profileColor}
-                firstLetter={`${msg.sender.firstName[0]}${msg.sender.lastName[0]}`.toUpperCase()}
-            />
-        );
-        })}
+                {state.data.map((msg) => {
+                    return (
+                        <ChatMessageBubble
+                            key={msg.id}
+                            name={`${msg.sender.firstName}`}
+                            content={msg.content}
+                            fromMe={
+                                msg.sender.id === authState.currentUser?.sub
+                            }
+                            profileColor={msg.sender?.profileColor}
+                            firstLetter={`${msg.sender.firstName[0]}${msg.sender.lastName[0]}`.toUpperCase()}
+                            dateTime={formatDistanceToNow(
+                                new Date(msg.createdAt),
+                                {
+                                    addSuffix: true,
+                                    locale: fr,
+                                }
+                            )}
+                        />
+                    );
+                })}
             </div>
             <SendMessageForm conversationId={conversationId} />
         </div>
