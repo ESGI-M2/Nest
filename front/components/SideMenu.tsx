@@ -30,20 +30,11 @@ export default function SideMenu() {
     return (
         <Sidebar>
             <SidebarHeader />
-            <SidebarContent>
+            <SidebarContent className="flex flex-col gap-4">
                 <NewConversation />
                 <ConversationList />
                 <UserList />
             </SidebarContent>
-            <SidebarFooter>
-                <Button
-                    onClick={handleLogout}
-                    variant="ghost"
-                    className="w-full"
-                >
-                    Logout
-                </Button>
-            </SidebarFooter>
         </Sidebar>
     );
 }

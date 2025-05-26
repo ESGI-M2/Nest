@@ -80,7 +80,7 @@ export default function SendMessageForm({
     return (
         <form
             onSubmit={handleSubmit}
-            className="flex items-center p-2 gap-2 border-t"
+            className="flex items-center p-4 gap-2 border-t border-base-300"
         >
             <input
                 type="text"

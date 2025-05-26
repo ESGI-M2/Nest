@@ -3,6 +3,7 @@ import { AuthProvider } from "@/context/authContext";
 
 import SideMenu from "@/components/SideMenu";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import NavBar from "@/components/ui/navbar";
 
 export default function AuthedLayout({
     children,
@@ -36,9 +37,11 @@ export default function AuthedLayout({
     return (
         <SidebarProvider>
             <AuthProvider>
-                <SideMenu />
-                <main className="w-full">
-                    <SidebarTrigger />
+                <div className="p-4 bg-base-300">
+                    <SideMenu />
+                </div>
+                <main className="w-full flex flex-col">
+                    <NavBar />
                     {children}
                 </main>
             </AuthProvider>

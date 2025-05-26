@@ -105,7 +105,7 @@ export default function ChatPage() {
     }, [conversationId]);
 
     return (
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col flex-1">
             <div className="flex-1 overflow-y-auto p-4 space-y-2">
                 {state.loading && <p>Loading...</p>}
                 {state.error && <p className="text-error">{state.error}</p>}

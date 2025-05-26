@@ -67,37 +67,39 @@ export default function UserList({ onUserClick }: UserListProps) {
   }, []);
 
   return (
-    <div className="w-full bg-base-100 rounded-md p-2">
-      <h2 className="text-lg font-semibold mb-2">Utilisateurs</h2>
+      <div className="w-full bg-base-100 rounded-md p-4">
+          <h2 className="text-lg font-semibold mb-2">Utilisateurs</h2>
 
-      {state.loading && <p>Chargement...</p>}
-      {state.error && <p className="text-error">{state.error}</p>}
+          {state.loading && <p>Chargement...</p>}
+          {state.error && <p className="text-error">{state.error}</p>}
 
-      <ul className="space-y-2">
-        {state.data.map((user) => (
-          <li
-            key={user.id}
-            className="flex items-center gap-2 p-2 bg-base-100 rounded cursor-pointer hover:bg-base-300 transition"
-            onClick={() => onUserClick?.(user.id)}
-          >
-            <div
-              className="w-8 h-8 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: user.profileColor || "#ccc" }}
-            >
-              <span className="text-xs font-bold text-white">
-                {user.firstName[0]}
-              </span>
-            </div>
+          <ul className="space-y-2">
+              {state.data.map((user) => (
+                  <li
+                      key={user.id}
+                      className="flex items-center gap-2 p-2 bg-base-100 rounded cursor-pointer hover:bg-base-300 transition"
+                      onClick={() => onUserClick?.(user.id)}
+                  >
+                      <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center"
+                          style={{
+                              backgroundColor: user.profileColor || "#ccc",
+                          }}
+                      >
+                          <span className="text-xs font-bold text-white">
+                              {user.firstName[0]}
+                          </span>
+                      </div>
 
-            <div>
-              <p className="font-medium">
-                {user.firstName} {user.lastName}
-              </p>
-              <p className="text-xs text-gray-500">{user.email}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+                      <div>
+                          <p className="font-medium">
+                              {user.firstName} {user.lastName}
+                          </p>
+                          <p className="text-xs text-gray-500">{user.email}</p>
+                      </div>
+                  </li>
+              ))}
+          </ul>
+      </div>
   );
 }
