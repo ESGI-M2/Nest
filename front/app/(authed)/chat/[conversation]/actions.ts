@@ -14,3 +14,18 @@ export async function fetchConversationMessages(conversationId: string) {
     return { success: false, message: "Error fetching messages" };
   }
 }
+
+export async function getUser(userid: string) {
+  try {
+    const response = await api.get(`/users/${userid}`);
+
+    if (response.status === 200) {
+      return { success: true, messages: response.data };
+    } else {
+      return { success: false, message: "Failed to get user" };
+    }
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Error getting user" };
+  }
+}

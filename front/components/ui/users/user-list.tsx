@@ -87,7 +87,7 @@ export default function UserList({ onUserClick }: UserListProps) {
                           }}
                       >
                           <span className="text-xs font-bold text-white">
-                              {user.firstName[0]}
+                              {user.firstName[0].toUpperCase()}{user.lastName[0].toUpperCase()}
                           </span>
                       </div>
 

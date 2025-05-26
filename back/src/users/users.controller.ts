@@ -17,6 +17,7 @@ import { User } from '@prisma/client';
 import { Response } from 'express';
 import { Public } from 'src/decorators/Public';
 import { CreateOrUpdateUserDto } from './dto/createOrUpdateUser';
+import {  CreateOrUpdateColorUserDto } from './dto/createOrUpdateColorUser';
 import { FindAllUsersDto } from './dto/usersList';
 import { UsersService } from './users.service';
 
@@ -48,10 +49,9 @@ export class UsersController {
 
   @Get('/:id')
   @ApiParam({ name: 'id' })
-  findById(@Param('id') id) {
-    console.log(id);
-
-    return 'Find all users';
+  async findById(@Param('id') id: string): Promise<User | null> {
+    const user = await this.usersService.getById(id);
+    return user;
   }
 
   @Post()
@@ -68,7 +68,15 @@ export class UsersController {
     return await this.usersService.updatePassword(token, password);
   }
 
-  @Put(':id')
+  @Put(':id/color')
+  async updateColorUser(
+    @Param('id') id: string,
+    @Body() updateUser: CreateOrUpdateColorUserDto,
+  ) {
+    return await this.usersService.updateUser(id, updateUser);
+  }
+
+    @Put(':id')
   async updateUser(
     @Param('id') id: string,
     @Body() updateUser: CreateOrUpdateUserDto,

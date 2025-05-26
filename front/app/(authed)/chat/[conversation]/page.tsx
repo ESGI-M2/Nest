@@ -4,7 +4,7 @@ import SendMessageForm from "@/components/ui/chat/SendMessageForm";
 import { useParams } from "next/navigation";
 import { useEffect, useReducer } from "react";
 import { z } from "zod";
-import { fetchConversationMessages } from "./actions";
+import { fetchConversationMessages, getUser } from "./actions";
 import { ChatMessageBubble } from "@/components/ui/chat/ChatMessageBubble";
 import { useAuth } from "@/context/authContext";
 import { getSocket } from "@/lib/socket";
@@ -109,13 +109,21 @@ export default function ChatPage() {
             <div className="flex-1 overflow-y-auto p-4 space-y-2">
                 {state.loading && <p>Loading...</p>}
                 {state.error && <p className="text-error">{state.error}</p>}
-                {state.data.map((msg) => (
-                    <ChatMessageBubble
-                        key={msg.id}
-                        content={msg.content}
-                        fromMe={msg.senderId === authState.currentUser?.sub}
-                    />
-                ))}
+       {state.data.map((msg) => {
+   /*     const user = getUser(msg)
+console.log(userResponse.data)*/
+// TODO GET USER
+  return (
+    <ChatMessageBubble
+      key={msg.id}
+      content={msg.content}
+      fromMe={msg.senderId === authState.currentUser?.sub}
+      profileColor={authState.currentUser?.profileColor}
+      firstLetter={'initials'}
+    />
+  );
+})}
+
             </div>
             <SendMessageForm conversationId={conversationId} />
         </div>

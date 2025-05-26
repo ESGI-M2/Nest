@@ -40,4 +40,16 @@ export class AuthController {
   async register(@Body() registerDto: RegisterDto) {
     return await this.authService.register(registerDto);
   }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('logout')
+  @Public()
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+    return { message: 'Successfully logged out' };
+  }
 }
