@@ -65,6 +65,17 @@ export class UsersService {
     });
   }
 
+  updateUserColor(id: string, color: string) {
+    return this.prisma.user.update({
+      data: {
+        profileColor: color,
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
   async updatePassword(token: string, password: string) {
     const foundToken = await this.prisma.token.findFirstOrThrow({
       select: {

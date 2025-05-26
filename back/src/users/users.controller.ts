@@ -73,10 +73,10 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateUser: CreateOrUpdateColorUserDto,
   ) {
-    return await this.usersService.updateUser(id, updateUser);
+    return await this.usersService.updateUserColor(id, updateUser.profileColor);
   }
 
-    @Put(':id')
+  @Put(':id')
   async updateUser(
     @Param('id') id: string,
     @Body() updateUser: CreateOrUpdateUserDto,
