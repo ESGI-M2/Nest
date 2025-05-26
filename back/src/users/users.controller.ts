@@ -7,18 +7,16 @@ import {
   Param,
   Post,
   Put,
-  Query,
   Req,
   Res,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiParam } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { Public } from 'src/decorators/Public';
 import { CreateOrUpdateUserDto } from './dto/createOrUpdateUser';
-import {  CreateOrUpdateColorUserDto } from './dto/createOrUpdateColorUser';
-import { FindAllUsersDto } from './dto/usersList';
+import { CreateOrUpdateColorUserDto } from './dto/createOrUpdateColorUser';
 import { UsersService } from './users.service';
 
 interface RequestWithUser extends Request {
@@ -30,8 +28,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async findAll() {
-    const users = await this.usersService.findAll();
+  async findAllExceptCurrent(@Req() req) {
+    const currentUserId = req.user.sub;
+    const users = await this.usersService.findAll([currentUserId]);
 
     return users;
   }

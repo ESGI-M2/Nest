@@ -144,23 +144,27 @@ export default function NewConversation() {
                         ✕
                     </button>
 
-                    <h3 className="font-bold text-lg">Nouvelle Conversation</h3>
+                    <h3 className="font-bold text-lg">Nouvelle conversation</h3>
 
                     {state.error && <p className="text-error">{state.error}</p>}
 
                     <input
                         type="text"
                         placeholder="Titre de la conversation"
-                        className="input input-bordered w-full"
+                        className="input input-primary w-full"
                         value={state.name}
                         onChange={(e) =>
                             dispatch({ type: "SET_NAME", name: e.target.value })
                         }
                     />
 
-                    <div className="max-h-40 overflow-auto rounded p-2 border">
+                    <div className="max-h-40 overflow-auto rounded">
                         {state.loadingUsers ? (
                             <p>Chargement des utilisateurs…</p>
+                        ) : state.users.length === 0 ? (
+                            <div role="alert" className="alert">
+                                <span>Aucun utilisateur trouvé.</span>
+                            </div>
                         ) : (
                             state.users.map((user) => (
                                 <label

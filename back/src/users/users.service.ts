@@ -25,7 +25,10 @@ export class UsersService {
     }
   }
 
-  async findAll() {
+  async findAll(excludedUserIds: string[] = []) {
+    const whereClause =
+      excludedUserIds.length > 0 ? { id: { notIn: excludedUserIds } } : {};
+
     const users = await this.prisma.user.findMany({
       select: {
         id: true,
@@ -35,8 +38,8 @@ export class UsersService {
         profileColor: true,
         createdAt: true,
         updatedAt: true,
-        // Exclude password
       },
+      where: whereClause,
     });
 
     return users;

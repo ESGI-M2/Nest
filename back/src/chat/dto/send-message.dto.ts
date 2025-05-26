@@ -6,9 +6,6 @@ export class SendMessageDto {
   @ApiProperty({ description: 'Message content' })
   @IsString()
   @MinLength(1, { message: 'Le message ne doit pas être vide.' })
-  @Length(1, 1000, {
-    message: 'Le message ne doit pas dépasser 1000 caractères.',
-  })
   @Transform(({ value }: { value: string }) => value.trim())
   @Type(() => String)
   content: string;

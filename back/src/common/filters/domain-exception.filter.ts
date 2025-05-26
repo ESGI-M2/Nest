@@ -25,7 +25,7 @@ export class DomainExceptionFilter implements ExceptionFilter {
     };
 
     if (exception instanceof EmailAlreadyTakenError) {
-      status = HttpStatus.UNAUTHORIZED;
+      status = HttpStatus.BAD_REQUEST;
       payload = {
         errors: { email: ["Cette adresse e-mail n'est pas disponible."] },
       };
