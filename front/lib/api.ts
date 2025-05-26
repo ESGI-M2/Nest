@@ -5,4 +5,20 @@ const api = axios.create({
     withCredentials: true,
 });
 
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            if (typeof window !== "undefined") {
+                window.location.href = "/login";
+            }
+        } else if (error.response?.status === 403) {
+            if (typeof window !== "undefined") {
+                window.location.href = "/";
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default api;
