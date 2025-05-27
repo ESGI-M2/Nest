@@ -26,6 +26,33 @@ export class ConversationService {
     return conversation;
   }
 
+  async getByIdWithUsers(id: string) {
+    const conversation = await this.prisma.conversation.findUnique({
+      where: { id },
+      include: {
+        users: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                email: true,
+                firstName: true,
+                lastName: true,
+                profileColor: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!conversation) {
+      throw new ConversationNotFoundError(id);
+    }
+
+    return conversation;
+  }
+
   async getConversationsForUser(userId: string) {
     const user = await this.userService.getById(userId);
     if (!user) {
@@ -97,9 +124,9 @@ export class ConversationService {
     const messages = await this.prisma.message.findMany({
       where: { conversationId: conversation.id },
       orderBy: { createdAt: 'asc' },
-       include: {
+      include: {
         sender: true,
-      }
+      },
     });
 
     return messages;

@@ -30,14 +30,6 @@ export default function ProfileColorPicker() {
                     <UpdateIdentifierForm />
                 </div>
             </div>
-            <label className="tab flex inline-flex gap-2">
-                <input type="radio" name="setting_tab" />
-                <KeyRound className="w-4 h-4" />
-                Mot de passe
-            </label>
-            <div className="tab-content bg-base-100 border-base-300">
-                <div className="max-w-2xl mx-auto"></div>
-            </div>
         </div>
     );
 }

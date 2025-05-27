@@ -16,6 +16,8 @@ api.interceptors.response.use(
             window.location.href = "/login";
         } else if (status === 403 && path !== "/") {
             window.location.href = "/";
+        } else if (status === 404 && path !== "/not-found") {
+            window.location.href = "/not-found";
         }
 
         return Promise.reject(error);
