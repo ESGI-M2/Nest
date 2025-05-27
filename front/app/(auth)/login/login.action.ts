@@ -1,12 +1,15 @@
 import {
+  CurrentUser,
   LoginFormData,
   LoginFormErrors,
   LoginFormSchema,
 } from "@/lib/definitions";
 import api from "@/lib/api";
+import { useAuth } from "@/context/authContext";
+import { getSocket } from "@/lib/socket";
 
 type LoginResponse =
-  | { success: true; token: string }
+  | { success: true, currentUser: CurrentUser }
   | { success: false; errors?: LoginFormErrors; message?: string };
 
 export async function loginAPI(
@@ -30,7 +33,12 @@ export async function loginAPI(
       password: validated.data.password,
     });
 
-    return { success: true, token: response.data.access_token };
+    const socket = getSocket();
+    if (socket) {
+      socket.connect();
+    }
+
+    return { success: true, currentUser: response.data };
   } catch (error: any) {
     const fieldErrors = error?.response?.data?.errors;
 

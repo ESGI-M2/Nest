@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { loginAPI } from "@/app/actions/login";
+import { loginAPI } from "@/app/(auth)/login/login.action";
 import { useReducer } from "react";
 import { FormErrorMessage } from "@/components/ui/form/FormErrorMessage";
 import { useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ import {
     LoginFormErrors,
     LoginFormState,
 } from "@/lib/definitions";
+import { useAuth } from "@/context/authContext";
 
 type Action =
     | { type: "FIELD_CHANGE"; field: keyof LoginFormData; value: string }
@@ -73,7 +74,6 @@ export default function Login() {
 
         if (response.success) {
             dispatch({ type: "SET_SUCCESS", success: true });
-            localStorage.setItem("token", response.token);
             router.push("/");
         } else if (response.errors) {
             dispatch({ type: "SET_ERRORS", errors: response.errors });

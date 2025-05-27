@@ -4,6 +4,7 @@ import * as bcrypt from 'bcryptjs';
 
 import { PrismaService } from '../prisma.service';
 import { UserNotFoundError } from './user.error';
+import { EmailAlreadyTakenError } from 'src/auth/auth.error';
 
 @Injectable()
 export class UsersService {
@@ -13,6 +14,13 @@ export class UsersService {
     try {
       const user = await this.prisma.user.findUnique({
         where: { id },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          profileColor: true,
+        },
       });
 
       if (!user) {
@@ -68,8 +76,23 @@ export class UsersService {
     });
   }
 
-  updateUserColor(id: string, color: string) {
-    return this.prisma.user.update({
+  async updateUserPersonalInfo(
+    id: string,
+    data: {
+      firstName: string;
+      lastName: string;
+    },
+  ) {
+    return await this.prisma.user.update({
+      data,
+      where: {
+        id,
+      },
+    });
+  }
+
+  async updateUserColor(id: string, color: string) {
+    return await this.prisma.user.update({
       data: {
         profileColor: color,
       },
@@ -113,6 +136,21 @@ export class UsersService {
       where: {
         id,
       },
+    });
+  }
+
+  async updateUserEmail(id: string, email: string) {
+    const existingUser = await this.prisma.user.findFirst({
+      where: { email },
+    });
+
+    if (existingUser && existingUser.id !== id) {
+      throw new EmailAlreadyTakenError(email);
+    }
+
+    return await this.prisma.user.update({
+      data: { email },
+      where: { id },
     });
   }
 }
