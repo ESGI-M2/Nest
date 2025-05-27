@@ -5,6 +5,7 @@ import {
   Get,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   Req,
@@ -13,15 +14,13 @@ import {
 } from '@nestjs/common';
 import { ApiParam } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { Public } from 'src/decorators/Public';
-import { CreateOrUpdateUserDto } from './dto/createOrUpdateUser';
+import { CreateUserDto } from './dto/createUserDto';
 import { CreateOrUpdateColorUserDto } from './dto/createOrUpdateColorUser';
 import { UsersService } from './users.service';
-
-interface RequestWithUser extends Request {
-  user: User;
-}
+import { PatchEmailDto } from './dto/patchEmailDto';
+import { PatchUserPersonalInfoDto } from './dto/patchUserPersonalInfoDto';
 
 @Controller('users')
 export class UsersController {
@@ -36,25 +35,25 @@ export class UsersController {
   }
 
   @Get('me')
-  getMe(@Req() req: RequestWithUser) {
+  getMe(@Req() req) {
     const user = req.user;
 
     if (!user) {
       throw new UnauthorizedException();
     }
 
-    return user;
+    return this.usersService.getById(user.sub);
   }
 
   @Get('/:id')
   @ApiParam({ name: 'id' })
-  async findById(@Param('id') id: string): Promise<User | null> {
+  async findById(@Param('id') id: string) {
     const user = await this.usersService.getById(id);
     return user;
   }
 
   @Post()
-  async createUser(@Body() createUser: CreateOrUpdateUserDto) {
+  async createUser(@Body() createUser: CreateUserDto) {
     return await this.usersService.createUser(createUser);
   }
 
@@ -67,20 +66,40 @@ export class UsersController {
     return await this.usersService.updatePassword(token, password);
   }
 
-  @Put(':id/color')
-  async updateColorUser(
-    @Param('id') id: string,
+  @Patch('me/color')
+  async updateCurrentUserColor(
     @Body() updateUser: CreateOrUpdateColorUserDto,
+    @Req() req,
   ) {
-    return await this.usersService.updateUserColor(id, updateUser.profileColor);
+    const currentUserId = req.user.sub;
+    return await this.usersService.updateUserColor(
+      currentUserId,
+      updateUser.profileColor,
+    );
   }
 
-  @Put(':id')
-  async updateUser(
-    @Param('id') id: string,
-    @Body() updateUser: CreateOrUpdateUserDto,
+  @Patch('me/identifier')
+  async patchCurrentUserEmail(
+    @Body() updateEmailDto: PatchEmailDto,
+    @Req() req,
   ) {
-    return await this.usersService.updateUser(id, updateUser);
+    const currentUserId = req.user.sub;
+    return await this.usersService.updateUserEmail(
+      currentUserId,
+      updateEmailDto.email,
+    );
+  }
+
+  @Patch('me/personal-info')
+  async patcCurrentUserPersonalInfo(
+    @Body() updateUser: PatchUserPersonalInfoDto,
+    @Req() req,
+  ) {
+    const currentUserId = req.user.sub;
+    return await this.usersService.updateUserPersonalInfo(
+      currentUserId,
+      updateUser,
+    );
   }
 
   @Delete(':id')

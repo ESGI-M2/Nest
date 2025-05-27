@@ -32,7 +32,7 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
     });
 
-    return { user };
+    return user;
   }
 
   @Post('register')

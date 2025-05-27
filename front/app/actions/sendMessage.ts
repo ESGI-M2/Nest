@@ -24,6 +24,9 @@ export async function sendMessageAPI(
       throw new Error("Socket connection is not established.");
     }
 
+    console.log("Sending message:", validated.data);
+    console.log("Socket connection status:", socket);
+
     await new Promise<void>((resolve, reject) => {
         socket.emit(
             "message",
@@ -49,6 +52,7 @@ export async function sendMessageAPI(
 
     return { success: true };
   } catch (error: any) {
+    console.error("Error sending message:", error);
     const fieldErrors = error?.errors;
     if (fieldErrors) {
       return { errors: fieldErrors, success: false };

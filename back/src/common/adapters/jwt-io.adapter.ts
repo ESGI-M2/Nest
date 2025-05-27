@@ -5,7 +5,7 @@ import * as jwt from 'jsonwebtoken';
 import * as cookie from 'cookie';
 
 export class JwtIoAdapter extends IoAdapter {
-  constructor(private app: INestApplicationContext) {
+  constructor(app: INestApplicationContext) {
     super(app);
   }
 
@@ -25,12 +25,8 @@ export class JwtIoAdapter extends IoAdapter {
       }
 
       try {
-        const payload = jwt.verify(
-          token,
-          process.env.JWT_SECRET || 'default_secret',
-        );
+        const payload = jwt.verify(token, process.env.JWT_SECRET || 'secret');
 
-        // set socket data
         socket.data = payload;
 
         next();

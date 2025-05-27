@@ -6,8 +6,6 @@ import { Bubble } from "./bubble";
 import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/navigation";
 import { LogOut, Settings } from "lucide-react";
-import api from "@/lib/api";
-import { log } from "console";
 
 export default function NavBar() {
     const { state: authState, logout } = useAuth();
@@ -26,7 +24,7 @@ export default function NavBar() {
     };
 
     return (
-        <div className="navbar bg-base-100 shadow-sm">
+        <div className="navbar bg-base-100 shadow-sm h-16">
             <SidebarTrigger />
             <div className="flex-1" />
             <div className="dropdown dropdown-end">

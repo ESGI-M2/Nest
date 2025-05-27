@@ -2,7 +2,7 @@
 
 import SendMessageForm from "@/components/ui/chat/SendMessageForm";
 import { useParams } from "next/navigation";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { z } from "zod";
 import { fetchConversationMessages } from "./actions";
 import { ChatMessageBubble } from "@/components/ui/chat/ChatMessageBubble";
@@ -106,9 +106,25 @@ export default function ChatPage() {
         };
     }, [conversationId]);
 
+    const scrollRef = useRef<HTMLDivElement>(null);
+
+    // whenever messages change, scroll to bottom
+    useEffect(() => {
+        const el = scrollRef.current;
+        if (el) {
+            el.scrollTo({
+                top: el.scrollHeight,
+                behavior: "smooth",
+            });
+        }
+    }, [state.data]);
+
     return (
-        <div className="flex flex-col flex-1">
-            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        <div className="flex flex-col flex-1 max-h-[calc(100vh-4rem)]">
+            <div
+                ref={scrollRef}
+                className="flex-1 max-h-[calc(100vh-4rem)] overflow-y-auto p-4 space-y-2"
+            >
                 {state.loading && <p>Loading...</p>}
                 {state.error && <p className="text-error">{state.error}</p>}
                 {state.data.map((msg) => {
@@ -117,9 +133,7 @@ export default function ChatPage() {
                             key={msg.id}
                             name={`${msg.sender.firstName}`}
                             content={msg.content}
-                            fromMe={
-                                msg.sender.id === authState.currentUser?.sub
-                            }
+                            fromMe={msg.sender.id === authState.currentUser?.id}
                             profileColor={msg.sender?.profileColor}
                             firstLetter={`${msg.sender.firstName[0]}${msg.sender.lastName[0]}`.toUpperCase()}
                             dateTime={formatDistanceToNow(
